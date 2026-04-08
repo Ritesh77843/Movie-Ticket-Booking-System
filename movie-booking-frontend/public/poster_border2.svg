@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1"/>
+      <stop offset="40%" style="stop-color:#5c3a1e;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#e8c56d;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#e05c00;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="600" fill="url(#bg)"/>
+  <!-- Sky -->
+  <rect width="400" height="320" fill="url(#sky)"/>
+  <!-- Desert ground -->
+  <ellipse cx="200" cy="360" rx="210" ry="60" fill="#8B6914" opacity="0.7"/>
+  <rect x="0" y="340" width="400" height="260" fill="#5E4214" opacity="0.85"/>
+  <!-- Sun -->
+  <circle cx="200" cy="200" r="60" fill="#FF7700" opacity="0.7"/>
+  <circle cx="200" cy="200" r="40" fill="#FFD700" opacity="0.5"/>
+  <!-- Soldiers silhouette -->
+  <rect x="80" y="280" width="14" height="70" fill="#0D0D0D"/>
+  <ellipse cx="87" cy="275" rx="12" ry="13" fill="#0D0D0D"/>
+  <rect x="94" y="290" width="30" height="5" fill="#0D0D0D"/>
+  <rect x="200" y="270" width="14" height="80" fill="#0D0D0D"/>
+  <ellipse cx="207" cy="265" rx="12" ry="13" fill="#0D0D0D"/>
+  <rect x="214" y="278" width="30" height="5" fill="#0D0D0D"/>
+  <rect x="300" y="285" width="14" height="65" fill="#0D0D0D"/>
+  <ellipse cx="307" cy="280" rx="12" ry="13" fill="#0D0D0D"/>
+  <!-- Flag -->
+  <rect x="140" y="200" width="3" height="80" fill="#FF6600"/>
+  <rect x="143" y="200" width="40" height="25" fill="#FF6600"/>
+  <circle cx="163" cy="212" r="8" fill="#FFFFFF"/>
+  <rect x="155" y="204" width="2" height="18" fill="#1C3A6E" transform="rotate(0, 156, 213)"/>
+  <!-- Border line -->
+  <rect x="0" y="340" width="400" height="4" fill="#FF4500" opacity="0.8"/>
+  <!-- Decorative border -->
+  <rect x="8" y="8" width="384" height="584" fill="none" stroke="#FF6600" stroke-width="2" opacity="0.6"/>
+  <!-- Title -->
+  <text x="200" y="430" font-family="Impact, Arial Black, sans-serif" font-size="52" font-weight="bold" fill="#FF6600" text-anchor="middle" letter-spacing="4">BORDER 2</text>
+  <text x="200" y="465" font-family="Arial, sans-serif" font-size="14" fill="#FFD700" text-anchor="middle" letter-spacing="2">THE BATTLE CONTINUES</text>
+  <text x="200" y="500" font-family="Arial, sans-serif" font-size="12" fill="#FFA040" text-anchor="middle">JAI HIND • 2025</text>
+  <!-- Stars -->
+  <text x="200" y="540" font-family="Arial" font-size="18" fill="#FFD700" text-anchor="middle">★ ★ ★ ★ ★</text>
+  <text x="200" y="575" font-family="Arial" font-size="11" fill="#D4A96A" text-anchor="middle">ACTION • WAR • DRAMA</text>
+</svg>

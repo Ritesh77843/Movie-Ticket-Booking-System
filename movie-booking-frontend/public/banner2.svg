@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1a0a2e;stop-opacity:1"/>
+      <stop offset="30%" style="stop-color:#16213e;stop-opacity:1"/>
+      <stop offset="70%" style="stop-color:#0f3460;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1a0a2e;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="overlay" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.2"/>
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="400" fill="url(#bg)"/>
+  <!-- City skyline silhouette -->
+  <rect x="50" y="250" width="30" height="150" fill="#0a0a1e"/>
+  <rect x="100" y="200" width="40" height="200" fill="#0a0a1e"/>
+  <rect x="150" y="270" width="25" height="130" fill="#0a0a1e"/>
+  <rect x="190" y="220" width="50" height="200" fill="#0a0a1e"/>
+  <rect x="255" y="260" width="35" height="140" fill="#0a0a1e"/>
+  <rect x="900" y="230" width="45" height="170" fill="#0a0a1e"/>
+  <rect x="960" y="200" width="35" height="200" fill="#0a0a1e"/>
+  <rect x="1010" y="250" width="50" height="150" fill="#0a0a1e"/>
+  <rect x="1075" y="220" width="40" height="180" fill="#0a0a1e"/>
+  <rect x="1130" y="260" width="30" height="140" fill="#0a0a1e"/>
+  <rect x="1175" y="240" width="45" height="160" fill="#0a0a1e"/>
+  <!-- Glowing windows -->
+  <rect x="107" y="215" width="8" height="8" fill="#FFD700" opacity="0.8"/>
+  <rect x="120" y="215" width="8" height="8" fill="#FFD700" opacity="0.6"/>
+  <rect x="107" y="232" width="8" height="8" fill="#FFD700" opacity="0.7"/>
+  <rect x="198" y="235" width="8" height="8" fill="#4FC3F7" opacity="0.8"/>
+  <rect x="215" y="235" width="8" height="8" fill="#4FC3F7" opacity="0.6"/>
+  <rect x="198" y="252" width="8" height="8" fill="#4FC3F7" opacity="0.7"/>
+  <rect x="968" y="215" width="8" height="8" fill="#FFD700" opacity="0.7"/>
+  <rect x="1020" y="265" width="8" height="8" fill="#4FC3F7" opacity="0.8"/>
+  <rect x="1083" y="235" width="8" height="8" fill="#FFD700" opacity="0.6"/>
+  <!-- Spotlight beams -->
+  <line x1="500" y1="400" x2="300" y2="0" stroke="white" stroke-width="60" opacity="0.03"/>
+  <line x1="780" y1="400" x2="980" y2="0" stroke="white" stroke-width="60" opacity="0.03"/>
+  <!-- Content -->
+  <rect x="0" y="0" width="1280" height="400" fill="url(#overlay)"/>
+  <text x="640" y="175" font-family="Georgia, 'Times New Roman', serif" font-size="36" fill="#aaa" text-anchor="middle" letter-spacing="6">NOW SHOWING</text>
+  <text x="640" y="260" font-family="Impact, Arial Black, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle" letter-spacing="5">BLOCKBUSTER HITS</text>
+  <text x="640" y="310" font-family="Arial, sans-serif" font-size="20" fill="#90CAF9" text-anchor="middle" letter-spacing="3">The biggest movies of 2025 — Only in Theatres</text>
+  <!-- Dividers -->
+  <line x1="200" y1="230" x2="500" y2="230" stroke="white" stroke-width="1" opacity="0.3"/>
+  <line x1="780" y1="230" x2="1080" y2="230" stroke="white" stroke-width="1" opacity="0.3"/>
+  <!-- Star row -->
+  <text x="640" y="365" font-family="Arial" font-size="22" fill="#FFD700" text-anchor="middle">★ ★ ★ ★ ★</text>
+</svg>

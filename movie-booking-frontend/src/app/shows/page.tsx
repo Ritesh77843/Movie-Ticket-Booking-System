@@ -31,20 +31,12 @@ export default function ShowsPage() {
     }
 
     axios
-      .get(`${API_URL}/api/shows`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      .get(`${API_URL}/api/movies`)
       .then((res) => {
         setShows(res.data);
       })
       .catch((err) => {
-        console.error("SHOW LIST ERROR:", err?.response?.data || err.message);
-        if (err.response?.status === 401) {
-          localStorage.clear();
-          router.push("/login");
-        }
+        console.error("MOVIE LIST ERROR:", err?.response?.data || err.message);
       })
       .finally(() => setLoading(false));
   }, []);

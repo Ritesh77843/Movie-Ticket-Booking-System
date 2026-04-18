@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -15,25 +15,23 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     
-    // Check if admin login
-    if (loginType === "admin") {
-      // Admin can only use email
-      if (!emailOrPhone.includes("@")) {
-        setError("Admin must login with email");
-        return;
-      }
-    }
+    // Removed admin email-only restriction — phone login now supported
     
     try {
       setLoading(true);
       const res = await axios.post(`${API_URL}/api/auth/login`, {
-        emailOrPhone,
-        password,
+        emailOrPhone: emailOrPhone.trim(),
+        password: password.trim(),
       });
       
       // Check role if admin login
@@ -76,14 +74,16 @@ export default function LoginPage() {
         
         {/* Pikachu Character Layer (Positioned absolutely so it breaks outside the card) */}
         <div className="absolute right-[-10%] sm:right-[5%] md:right-[-5%] bottom-[-5%] md:-bottom-10 z-20 pointer-events-none drop-shadow-[0_10px_25px_rgba(0,0,0,0.35)]">
-          <Image 
-            src={`/login_companion.png?t=${Date.now()}`} // Cache buster to ensure the transparent version loads
-            alt="Companion Mascot" 
-            width={450} 
-            height={450}
-            className="w-[280px] sm:w-[350px] md:w-[450px] object-contain" 
-            unoptimized // Prevent Next.js from serving a cached old version
-          />
+          {mounted && (
+            <Image 
+              src="/login_companion.png"
+              alt="Companion Mascot" 
+              width={450} 
+              height={450}
+              className="w-[280px] sm:w-[350px] md:w-[450px] object-contain" 
+              unoptimized // Prevent Next.js from serving a cached old version
+            />
+          )}
         </div>
 
         {/* Main Card */}
@@ -165,8 +165,8 @@ export default function LoginPage() {
                 onChange={(e) => setEmailOrPhone(e.target.value)}
                 placeholder={
                   loginType === "admin"
-                    ? "Admin Email"
-                    : "Trainer Email"
+                    ? "Admin Email or Phone"
+                    : "Email or Phone Number"
                 }
                 required
                 className="w-full border-[3px] border-amber-100 shadow-[inset_0_4px_6px_rgba(0,0,0,0.02)] rounded-2xl py-3.5 pl-12 pr-4 text-gray-700 font-bold bg-amber-50/30 outline-none focus:border-amber-400 focus:bg-white transition-all placeholder:text-gray-400 placeholder:font-semibold"

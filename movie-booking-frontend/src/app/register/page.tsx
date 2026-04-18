@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -24,6 +25,7 @@ export default function RegisterPage() {
       const res = await axios.post(`${API_URL}/api/auth/register`, {
         name,
         email,
+        phone: phone || undefined,
         password,
       });
       setSuccess(res.data.message || "Registered! Redirecting to login...");
@@ -74,6 +76,16 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
+              className="w-full bg-zinc-800 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-600"
+            />
+          </div>
+          <div>
+            <label className="text-gray-400 text-xs mb-1 block">Phone Number <span className="text-gray-600">(optional)</span></label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="9876543210"
               className="w-full bg-zinc-800 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-600"
             />
           </div>

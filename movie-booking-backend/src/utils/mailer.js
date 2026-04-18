@@ -1,30 +1,46 @@
 import nodemailer from "nodemailer";
 
 let transporter = null;
+let transporterVerified = false; // track verification state
 
 const getTransporter = () => {
-  if (!transporter) {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      throw new Error("EMAIL_USER or EMAIL_PASS not loaded in env");
-    }
+  // Already verified and working
+  if (transporter && transporterVerified) return transporter;
 
+  // Already tried and failed — don't retry
+  if (transporterVerified === false && transporter === null) return null;
+
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || process.env.EMAIL_USER.includes("example.com")) {
+    transporter = null;
+    transporterVerified = false;
+    return null;
+  }
+
+  try {
     transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
       secure: false,
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // Gmail App Password
+        pass: process.env.EMAIL_PASS,
       },
     });
 
+    // Verify async — but we mark it failed if it errors
     transporter.verify((err) => {
       if (err) {
-        console.error("❌ Mail transporter error:", err.message);
+        transporter = null;
+        transporterVerified = false;
       } else {
+        transporterVerified = true;
         console.log("✅ Mail transporter ready");
       }
     });
+  } catch (err) {
+    transporter = null;
+    transporterVerified = false;
+    return null;
   }
 
   return transporter;
@@ -35,11 +51,12 @@ export const sendOTPEmail = async (to, otp) => {
   try {
     if (!to) return;
 
-    const tx = getTransporter();
-
     console.log("-----------------------------------------");
     console.log(`🔑 DEV OTP for ${to}: ${otp}`);
     console.log("-----------------------------------------");
+
+    const tx = getTransporter();
+    if (!tx) return;
     
     await tx.sendMail({
       from: `"Cinema Booking" <${process.env.EMAIL_USER}>`,
@@ -57,16 +74,19 @@ export const sendOTPEmail = async (to, otp) => {
 
     console.log("📧 OTP email sent to:", to);
   } catch (err) {
-    console.error("❌ OTP MAIL ERROR:", err.message);
+    // Silently ignore — mark transporter as failed
+    transporter = null;
+    transporterVerified = false;
   }
 };
 
-// ✅ Send Security/Auth Alert
-export const sendAuthAlert = async (to, type, req) => {
+// ✅ Send Security/Auth Alert (fire-and-forget, never blocks login)
+export const sendAuthAlert = (to, type, req) => {
   try {
     if (!to) return;
 
     const tx = getTransporter();
+    if (!tx) return;
 
     const ip =
       req.headers["x-forwarded-for"]?.split(",")[0] ||
@@ -75,7 +95,8 @@ export const sendAuthAlert = async (to, type, req) => {
 
     const device = req.headers["user-agent"] || "Unknown Device";
 
-    await tx.sendMail({
+    // Fire and forget — do NOT await
+    tx.sendMail({
       from: `"Cinema Booking Security" <${process.env.EMAIL_USER}>`,
       to,
       subject: `Security Alert: ${type}`,
@@ -87,10 +108,12 @@ export const sendAuthAlert = async (to, type, req) => {
           <p><b>Device:</b> ${device}</p>
         </div>
       `,
+    }).catch(() => {
+      // Silently ignore — disable transporter
+      transporter = null;
+      transporterVerified = false;
     });
-
-    console.log(`📧 Security email sent to ${to} [${type}]`);
   } catch (err) {
-    console.error("❌ AUTH ALERT ERROR:", err.message);
+    // Silently ignore
   }
 };

@@ -8,12 +8,18 @@ import Link from "next/link";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function TheaterSelector({ movieId }: { movieId: string }) {
-  const [locations, setLocations] = useState<string[]>(["Mumbai", "Navi Mumbai"]);
+  const [locations, setLocations] = useState<string[]>(["Mumbai", "Navi Mumbai", "Pune", "Delhi"]);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [theatersBySubLocation, setTheatersBySubLocation] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [selectedTheater, setSelectedTheater] = useState<any>(null);
   const [shows, setShows] = useState<any[]>([]);
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (selectedLocation) {
@@ -51,6 +57,8 @@ export default function TheaterSelector({ movieId }: { movieId: string }) {
       console.error(err);
     }
   };
+
+  if (!mounted) return <div className="bg-[#0a0a0f] border border-white/10 rounded-3xl p-8 shadow-2xl h-[400px]" />;
 
   return (
     <div className="bg-[#0a0a0f] border border-white/10 rounded-3xl p-8 shadow-2xl">

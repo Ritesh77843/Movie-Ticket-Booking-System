@@ -108,8 +108,9 @@ export const login = async (req, res) => {
       });
     }
 
+    const sanitizedInput = emailOrPhone.trim().toLowerCase();
     const user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      $or: [{ email: sanitizedInput }, { phone: sanitizedInput }],
     });
 
     if (!user) {
@@ -124,7 +125,7 @@ export const login = async (req, res) => {
     const token = generateToken(user);
 
     if (user.email) {
-      await sendAuthAlert(user.email, "LOGIN", req);
+      sendAuthAlert(user.email, "LOGIN", req); // fire-and-forget, never blocks login
     }
 
     user.lastLoginAt = new Date();

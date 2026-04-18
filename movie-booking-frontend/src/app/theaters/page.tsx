@@ -8,7 +8,7 @@ import Link from "next/link";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function TheatersPage() {
-  const [locations] = useState(["Mumbai", "Navi Mumbai"]);
+  const [locations] = useState(["Mumbai", "Navi Mumbai", "Pune", "Delhi"]);
   const [selectedLocation, setSelectedLocation] = useState("Mumbai");
   const [theatersBySub, setTheatersBySub] = useState<any>({});
   const [search, setSearch] = useState("");

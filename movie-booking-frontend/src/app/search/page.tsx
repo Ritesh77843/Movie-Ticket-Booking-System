@@ -38,7 +38,9 @@ function SearchPageInner() {
         const filtered = allShows.filter((show: any) => 
           show.movie?.title?.toLowerCase().includes(query.toLowerCase())
         );
-        setResults(filtered);
+        // Group by movie _id to remove duplicates
+        const uniqueMovies = Array.from(new Map(filtered.map((show: any) => [show.movie?._id, show])).values());
+        setResults(uniqueMovies);
       })
       .catch(err => console.error("Search fetch error:", err))
       .finally(() => setLoading(false));

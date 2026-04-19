@@ -44,6 +44,7 @@ export default function LoginPage() {
       localStorage.clear();
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+      window.dispatchEvent(new Event("auth-change"));
       router.push(loginType === "admin" ? "/admin-dashboard" : "/shows");
     } catch (err: any) {
       console.error("Login Error:", err);

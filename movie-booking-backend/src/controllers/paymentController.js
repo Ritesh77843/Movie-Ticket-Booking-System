@@ -74,16 +74,18 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ message: "Invalid payment signature" });
     }
 
+    // Check for duplicate booking (idempotency guard)
+    const existingBooking = await Booking.findOne({ paymentReferenceId: razorpay_payment_id });
+    if (existingBooking) {
+      return res.status(200).json({ message: "Booking already confirmed", booking: existingBooking, totalPrice: existingBooking.totalPrice });
+    }
+
     const show = await Show.findById(showId);
     if (!show) return res.status(404).json({ message: "Show not found" });
 
-    // Mark seats as booked
-    const result = await Show.updateOne(
-      {
-        _id: showId,
-        "seats.lockedBy": req.user._id,
-        "seats.status": "locked",
-      },
+    // Strategy 1: Try to mark locked seats (locked by this user) as booked
+    let result = await Show.updateOne(
+      { _id: showId },
       {
         $set: {
           "seats.$[elem].status": "booked",
@@ -102,8 +104,38 @@ export const verifyPayment = async (req, res) => {
       }
     );
 
+    // Strategy 2: If seats were auto-unlocked during payment, book them from "available" state
+    // Payment is already verified, so we must honour the booking
     if (result.modifiedCount === 0) {
-      return res.status(409).json({ message: "Seats are not locked by you or already booked" });
+      result = await Show.updateOne(
+        { _id: showId },
+        {
+          $set: {
+            "seats.$[elem].status": "booked",
+            "seats.$[elem].lockedBy": null,
+            "seats.$[elem].lockedAt": null,
+          },
+        },
+        {
+          arrayFilters: [
+            {
+              "elem.seatNo": { $in: seats },
+              "elem.status": "available",
+            },
+          ],
+        }
+      );
+    }
+
+    if (result.modifiedCount === 0) {
+      // Seats might already be booked by someone else – edge case
+      // Check current state to give a useful error
+      const freshShow = await Show.findById(showId);
+      const seatStates = freshShow?.seats
+        ?.filter(s => seats.includes(s.seatNo))
+        ?.map(s => `${s.seatNo}:${s.status}`) || [];
+      console.error(`verifyPayment: could not book seats. Current states: ${seatStates.join(", ")}`);
+      return res.status(409).json({ message: "Seats are already booked by another user. Please contact support with your payment ID: " + razorpay_payment_id });
     }
 
     const totalPrice = seats.length * show.price;

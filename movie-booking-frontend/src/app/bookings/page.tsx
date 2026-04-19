@@ -144,7 +144,7 @@ export default function BookingHistoryPage() {
               return (
                 <div key={booking._id} className="bg-zinc-900 rounded-xl p-6 hover:bg-zinc-800 transition">
                   {/* Movie Title */}
-                  <h2 className="text-xl font-bold mb-2">{booking.show?.movieTitle}</h2>
+                  <h2 className="text-xl font-bold mb-2">{booking.show?.movie?.title || "Unknown Movie"}</h2>
 
                   {/* Status Badge */}
                   <div className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4 ${statusColor}`}>
@@ -154,7 +154,7 @@ export default function BookingHistoryPage() {
                   {/* Details */}
                   <div className="space-y-2 text-sm text-gray-300 mb-4">
                     <p>
-                      <span className="text-gray-400">Screen:</span> {booking.show?.screen}
+                      <span className="text-gray-400">Screen:</span> {booking.show?.screen?.name || "N/A"}
                     </p>
                     <p>
                       <span className="text-gray-400">Date:</span> {formattedDate}
@@ -205,7 +205,7 @@ export default function BookingHistoryPage() {
                   {/* Actions */}
                   <div className="flex gap-2">
                     <button
-                      onClick={() => router.push(`/shows/${booking.show._id}`)}
+                      onClick={() => router.push(`/shows/${booking.show?._id}`)}
                       className="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition"
                     >
                       View Show

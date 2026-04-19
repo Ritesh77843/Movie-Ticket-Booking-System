@@ -4,7 +4,14 @@ import Booking from "../models/Booking.js";
 export const getUserBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.user._id })
-      .populate("show", "movieTitle screen showTime seats price")
+      .populate({
+        path: "show",
+        select: "movie screen showTime seats price",
+        populate: [
+          { path: "movie", select: "title genre posterUrl" },
+          { path: "screen", select: "name" },
+        ],
+      })
       .sort({ createdAt: -1 });
 
     res.json(bookings);
@@ -19,7 +26,14 @@ export const getBookingById = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id)
       .populate("user", "name email phone")
-      .populate("show", "movieTitle screen showTime price seats");
+      .populate({
+        path: "show",
+        select: "movie screen showTime price seats",
+        populate: [
+          { path: "movie", select: "title genre posterUrl" },
+          { path: "screen", select: "name" },
+        ],
+      });
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });

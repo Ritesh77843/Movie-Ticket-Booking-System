@@ -147,13 +147,9 @@ export const confirmBooking = async (req, res) => {
       return res.status(404).json({ message: "Show not found" });
     }
 
-    const result = await Show.updateOne(
-      {
-        _id: showId,
-        "seats.seatNo": { $in: seats },
-        "seats.lockedBy": req.user._id,
-        "seats.status": "locked",
-      },
+    // Strategy 1: Try to mark locked seats (locked by this user) as booked
+    let result = await Show.updateOne(
+      { _id: showId },
       {
         $set: {
           "seats.$[elem].status": "booked",
@@ -172,10 +168,32 @@ export const confirmBooking = async (req, res) => {
       }
     );
 
+    // Strategy 2: If seats were auto-unlocked during payment, book from "available"
+    if (result.modifiedCount === 0) {
+      result = await Show.updateOne(
+        { _id: showId },
+        {
+          $set: {
+            "seats.$[elem].status": "booked",
+            "seats.$[elem].lockedBy": null,
+            "seats.$[elem].lockedAt": null,
+          },
+        },
+        {
+          arrayFilters: [
+            {
+              "elem.seatNo": { $in: seats },
+              "elem.status": "available",
+            },
+          ],
+        }
+      );
+    }
+
     if (result.modifiedCount === 0) {
       return res
         .status(409)
-        .json({ message: "Seats are not locked by you or already booked" });
+        .json({ message: "Seats are already booked by another user" });
     }
 
     // Create booking record
@@ -186,6 +204,7 @@ export const confirmBooking = async (req, res) => {
       seats,
       totalPrice,
       paymentStatus: "completed",
+      paymentMethod: "upi",
       bookingStatus: "active",
     });
 

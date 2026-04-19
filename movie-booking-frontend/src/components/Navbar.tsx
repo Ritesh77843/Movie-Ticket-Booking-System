@@ -2,18 +2,44 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
+  const syncUser = useCallback(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      const parsed = stored ? JSON.parse(stored) : null;
+      setUser((prev: any) => {
+        // Only update if changed to avoid unnecessary re-renders
+        if (JSON.stringify(prev) !== JSON.stringify(parsed)) return parsed;
+        return prev;
+      });
+    } catch {
+      setUser(null);
+    }
   }, []);
+
+  // Re-check user on every route change (pathname change)
+  useEffect(() => {
+    syncUser();
+  }, [pathname, syncUser]);
+
+  // Listen for custom auth-change event (fired by login/logout)
+  useEffect(() => {
+    const handleAuthChange = () => syncUser();
+    window.addEventListener("auth-change", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+    return () => {
+      window.removeEventListener("auth-change", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, [syncUser]);
 
   const handleSearch = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && searchQuery.trim()) {

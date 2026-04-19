@@ -98,8 +98,14 @@ export const lockSeats = async (req, res) => {
     const result = await Show.updateOne(
       {
         _id: showId,
-        "seats.seatNo": { $in: seats },
-        "seats.status": "available",
+        seats: {
+          $not: {
+            $elemMatch: {
+              seatNo: { $in: seats },
+              status: { $ne: "available" }
+            }
+          }
+        }
       },
       {
         $set: {
@@ -149,7 +155,20 @@ export const confirmBooking = async (req, res) => {
 
     // Strategy 1: Try to mark locked seats (locked by this user) as booked
     let result = await Show.updateOne(
-      { _id: showId },
+      { 
+        _id: showId,
+        seats: {
+          $not: {
+            $elemMatch: {
+              seatNo: { $in: seats },
+              $or: [
+                { status: { $ne: "locked" } },
+                { lockedBy: { $ne: req.user._id } }
+              ]
+            }
+          }
+        }
+      },
       {
         $set: {
           "seats.$[elem].status": "booked",
@@ -171,7 +190,17 @@ export const confirmBooking = async (req, res) => {
     // Strategy 2: If seats were auto-unlocked during payment, book from "available"
     if (result.modifiedCount === 0) {
       result = await Show.updateOne(
-        { _id: showId },
+        { 
+          _id: showId,
+          seats: {
+            $not: {
+              $elemMatch: {
+                seatNo: { $in: seats },
+                status: { $ne: "available" }
+              }
+            }
+          }
+        },
         {
           $set: {
             "seats.$[elem].status": "booked",

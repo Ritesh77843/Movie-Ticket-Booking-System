@@ -131,18 +131,6 @@ export default function Navbar() {
             <Link href="/theaters" className="hover:text-rose-500 transition-colors">
               Cinemas
             </Link>
-            <Link href="#" className="hover:text-rose-500 transition-colors">
-              Stream
-            </Link>
-            <Link href="#" className="hover:text-rose-500 transition-colors">
-              Events
-            </Link>
-            <Link href="#" className="hover:text-rose-500 transition-colors">
-              Plays
-            </Link>
-            <Link href="#" className="hover:text-rose-500 transition-colors">
-              Sports
-            </Link>
           </div>
         </div>
       )}

@@ -85,7 +85,20 @@ export const verifyPayment = async (req, res) => {
 
     // Strategy 1: Try to mark locked seats (locked by this user) as booked
     let result = await Show.updateOne(
-      { _id: showId },
+      { 
+        _id: showId,
+        seats: {
+          $not: {
+            $elemMatch: {
+              seatNo: { $in: seats },
+              $or: [
+                { status: { $ne: "locked" } },
+                { lockedBy: { $ne: req.user._id } }
+              ]
+            }
+          }
+        }
+      },
       {
         $set: {
           "seats.$[elem].status": "booked",
@@ -108,7 +121,17 @@ export const verifyPayment = async (req, res) => {
     // Payment is already verified, so we must honour the booking
     if (result.modifiedCount === 0) {
       result = await Show.updateOne(
-        { _id: showId },
+        { 
+          _id: showId,
+          seats: {
+            $not: {
+              $elemMatch: {
+                seatNo: { $in: seats },
+                status: { $ne: "available" }
+              }
+            }
+          }
+        },
         {
           $set: {
             "seats.$[elem].status": "booked",

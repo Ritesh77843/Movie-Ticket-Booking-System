@@ -30,16 +30,16 @@ export default function ShowDetailsPage() {
   const user =
     typeof window !== "undefined"
       ? (() => {
-          try {
-            return JSON.parse(localStorage.getItem("user") || "null");
-          } catch {
-            return null;
-          }
-        })()
+        try {
+          return JSON.parse(sessionStorage.getItem("user") || "null");
+        } catch {
+          return null;
+        }
+      })()
       : null;
 
   const fetchShow = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) { router.push("/login"); return; }
     try {
       const res = await axios.get(`${API_URL}/api/shows/${id}`, {
@@ -79,7 +79,7 @@ export default function ShowDetailsPage() {
   };
 
   const lockSeats = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return router.push("/login");
     if (selectedSeats.length === 0) return;
 
@@ -92,7 +92,7 @@ export default function ShowDetailsPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       playGotcha();
-      setMessage({ text: `✅ Gotcha! ${selectedSeats.length} seat(s) locked for 2 minutes! Now click "Pay" to complete your booking.`, type: "success" });
+      setMessage({ text: `✅ Gotcha! ${selectedSeats.length} seat(s) locked for 5 minutes! Now click "Pay" to complete your booking.`, type: "success" });
       fetchShow();
     } catch (err: any) {
       playErrorSound();
@@ -133,7 +133,7 @@ export default function ShowDetailsPage() {
           </div>
           <h2 className="text-2xl font-bold mb-4">Show Disappeared!</h2>
           <p className="text-gray-400 mb-8 leading-relaxed text-sm">
-            {error}. This usually happens if the schedule was recently updated. 
+            {error}. This usually happens if the schedule was recently updated.
           </p>
           <button
             onClick={() => router.push("/shows")}
@@ -248,10 +248,10 @@ export default function ShowDetailsPage() {
                     isBooked
                       ? "Booked"
                       : isLocked && !isLockedByMe
-                      ? "Locked by another user"
-                      : isLockedByMe
-                      ? "Locked by you"
-                      : "Available"
+                        ? "Locked by another user"
+                        : isLockedByMe
+                          ? "Locked by you"
+                          : "Available"
                   }
                   className={cls}
                 >
@@ -334,13 +334,12 @@ export default function ShowDetailsPage() {
           {/* Notification message */}
           {message && (
             <div
-              className={`rounded-xl px-4 py-3 text-sm border ${
-                message.type === "success"
-                  ? "bg-green-500/10 border-green-500/20 text-green-400"
-                  : message.type === "error"
+              className={`rounded-xl px-4 py-3 text-sm border ${message.type === "success"
+                ? "bg-green-500/10 border-green-500/20 text-green-400"
+                : message.type === "error"
                   ? "bg-red-500/10 border-red-500/20 text-red-400"
                   : "bg-blue-500/10 border-blue-500/20 text-blue-400"
-              }`}
+                }`}
             >
               {message.text}
             </div>
@@ -351,7 +350,7 @@ export default function ShowDetailsPage() {
             <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-3">
               How to Book
             </p>
-            {["Select your seats", "Lock seats (holds for 2 min)", "Pay securely with Razorpay"].map(
+            {["Select your seats", "Lock seats (holds for 5 min)", "Pay securely with Razorpay"].map(
               (step, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-blue-900/40 border border-blue-500/30 text-blue-400 text-xs font-bold flex items-center justify-center shrink-0">

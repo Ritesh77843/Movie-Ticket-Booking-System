@@ -14,7 +14,7 @@ export default function BookingHistoryPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       router.push("/login");
       return;
@@ -24,7 +24,7 @@ export default function BookingHistoryPage() {
   }, []);
 
   const fetchBookings = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return;
 
     try {
@@ -38,7 +38,7 @@ export default function BookingHistoryPage() {
         err?.response?.data?.message || "Failed to fetch bookings"
       );
       if (err.response?.status === 401) {
-        localStorage.clear();
+        sessionStorage.clear();
         router.push("/login");
       }
     } finally {
@@ -47,7 +47,7 @@ export default function BookingHistoryPage() {
   };
 
   const handleCancelBooking = async (bookingId: string) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return router.push("/login");
 
     if (!confirm("Are you sure you want to cancel this booking?")) return;
@@ -170,15 +170,14 @@ export default function BookingHistoryPage() {
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-gray-400 text-xs">Payment:</span>
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
-                        booking.paymentStatus === "completed"
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${booking.paymentStatus === "completed"
                           ? "bg-green-500/15 text-green-400"
                           : booking.paymentStatus === "refunded"
-                          ? "bg-blue-500/15 text-blue-400"
-                          : booking.paymentStatus === "failed"
-                          ? "bg-red-500/15 text-red-400"
-                          : "bg-yellow-500/15 text-yellow-400"
-                      }`}>
+                            ? "bg-blue-500/15 text-blue-400"
+                            : booking.paymentStatus === "failed"
+                              ? "bg-red-500/15 text-red-400"
+                              : "bg-yellow-500/15 text-yellow-400"
+                        }`}>
                         {booking.paymentStatus === "completed" ? "✓" : "•"}{" "}
                         {booking.paymentStatus?.charAt(0).toUpperCase() + booking.paymentStatus?.slice(1)}
                       </span>
@@ -204,16 +203,24 @@ export default function BookingHistoryPage() {
 
                   {/* Actions */}
                   <div className="flex gap-2">
+                    {booking.bookingStatus !== "cancelled" && (
+                      <button
+                        onClick={() => router.push(`/ticket/${booking._id}`)}
+                        className="flex-2 bg-emerald-600 hover:bg-emerald-500 px-3 py-2 rounded text-sm transition font-bold text-white shadow-md shadow-emerald-900/40"
+                      >
+                        🎟️ E-Ticket
+                      </button>
+                    )}
                     <button
                       onClick={() => router.push(`/shows/${booking.show?._id}`)}
                       className="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition"
                     >
-                      View Show
+                      Show
                     </button>
                     {booking.bookingStatus === "active" && (
                       <button
                         onClick={() => handleCancelBooking(booking._id)}
-                        className="flex-1 bg-red-600 hover:bg-red-700 px-3 py-2 rounded text-sm transition"
+                        className="flex-1 bg-zinc-700 hover:bg-red-600 px-3 py-2 rounded text-sm transition"
                       >
                         Cancel
                       </button>

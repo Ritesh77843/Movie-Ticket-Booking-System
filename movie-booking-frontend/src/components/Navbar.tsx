@@ -13,7 +13,7 @@ export default function Navbar() {
 
   const syncUser = useCallback(() => {
     try {
-      const stored = localStorage.getItem("user");
+      const stored = sessionStorage.getItem("user");
       const parsed = stored ? JSON.parse(stored) : null;
       setUser((prev: any) => {
         // Only update if changed to avoid unnecessary re-renders
@@ -48,7 +48,7 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/";
   };
 
@@ -72,7 +72,7 @@ export default function Navbar() {
             className="w-full px-5 py-2.5 rounded-xl bg-zinc-800/50 text-white border border-zinc-700/50 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium placeholder:text-zinc-500"
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
-             <kbd className="hidden sm:inline-block px-1.5 py-0.5 border border-zinc-700 rounded bg-zinc-900 text-[10px] font-bold">ENTER</kbd>
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 border border-zinc-700 rounded bg-zinc-900 text-[10px] font-bold">ENTER</kbd>
           </div>
         </div>
 
@@ -97,12 +97,20 @@ export default function Navbar() {
                 Dashboard
               </Link>
             ) : (
-              <Link
-                href="/bookings"
-                className="text-sm text-blue-300 hover:text-blue-100 transition"
-              >
-                My Bookings
-              </Link>
+              <>
+                <Link
+                  href="/wishlist"
+                  className="text-sm text-rose-400 hover:text-rose-300 transition"
+                >
+                  My Wishlist
+                </Link>
+                <Link
+                  href="/bookings"
+                  className="text-sm text-blue-300 hover:text-blue-100 transition"
+                >
+                  My Bookings
+                </Link>
+              </>
             )}
             <button
               onClick={handleLogout}
@@ -125,6 +133,9 @@ export default function Navbar() {
       {!isAdmin && (
         <div className="bg-zinc-950 border-t border-zinc-900">
           <div className="max-w-7xl mx-auto flex gap-6 px-4 py-3 text-xs font-bold uppercase tracking-wider text-zinc-400">
+            <Link href="/ai-picks" className="flex items-center gap-1.5 text-blue-400 hover:text-blue-300 transition-colors">
+              <span className="text-sm">✨</span> AI Picks
+            </Link>
             <Link href="/movies" className="hover:text-rose-500 transition-colors">
               Movies
             </Link>

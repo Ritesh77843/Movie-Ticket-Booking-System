@@ -24,7 +24,7 @@ export function UsersView() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const [uRes, aRes] = await Promise.all([
         axios.get(`${API_URL}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } }),
         axios.get(`${API_URL}/api/auth/admins`, { headers: { Authorization: `Bearer ${token}` } })
@@ -41,7 +41,7 @@ export function UsersView() {
   const handleToggleBlock = async (id: string, currentlyBlocked: boolean) => {
     if (!confirm(`Are you sure you want to ${currentlyBlocked ? "unblock" : "block"} this user?`)) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${API_URL}/api/admin/users/${id}/block`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -54,7 +54,7 @@ export function UsersView() {
   const handleDeleteAdmin = async (adminId: string) => {
     if (!confirm("Are you sure you want to delete this admin?")) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${API_URL}/api/auth/admins/${adminId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -68,7 +68,7 @@ export function UsersView() {
     e.preventDefault();
     if (adminFormData.password.length < 6) return alert("Password must be at least 6 characters");
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${API_URL}/api/auth/admins`, adminFormData, {
         headers: { Authorization: `Bearer ${token}` }
       });

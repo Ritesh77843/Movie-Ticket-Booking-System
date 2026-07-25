@@ -27,7 +27,7 @@ export function ScreensView() {
 
   const fetchScreens = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${API_URL}/api/screens`, { headers: { Authorization: `Bearer ${token}` } });
       setScreens(res.data);
     } catch (err) { console.error(err); } finally { setLoading(false); }
@@ -36,7 +36,7 @@ export function ScreensView() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${API_URL}/api/screens`, formData, { headers: { Authorization: `Bearer ${token}` } });
       setShowModal(false);
       setFormData({ name: "", theater: "", rows: 10, seatsPerRow: 10 });
@@ -47,7 +47,7 @@ export function ScreensView() {
   const handleDelete = async (id: string) => {
     if(!confirm("Delete this theatre screen?")) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${API_URL}/api/screens/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       fetchScreens();
     } catch (err: any) { alert(err.response?.data?.message || "Failed to delete"); }

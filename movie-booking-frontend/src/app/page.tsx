@@ -1,5 +1,5 @@
 // src/app/page.tsx
-
+export const dynamic = "force-dynamic";
 import Winner from "@/components/Winner";
 import MovieRow from "@/components/MovieRow";
 
@@ -28,14 +28,14 @@ export default async function Home() {
     }
 
     const data = await res.json();
-    
+
     // Deduplicate movies by title visually to prevent repetitive cards
     if (Array.isArray(data)) {
       const uniqueMoviesMap = new Map();
       data.forEach(movie => {
         const normalizedTitle = (movie.title || "").trim().toLowerCase();
         if (normalizedTitle && !uniqueMoviesMap.has(normalizedTitle)) {
-           uniqueMoviesMap.set(normalizedTitle, movie);
+          uniqueMoviesMap.set(normalizedTitle, movie);
         }
       });
       movies = Array.from(uniqueMoviesMap.values());

@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 export const getDashboardStats = async (req, res) => {
   try {
     const totalBookings = await Booking.countDocuments();
-    
+
     const revenueAgg = await Booking.aggregate([
       { $match: { paymentStatus: "completed" } },
       { $group: { _id: null, totalRevenue: { $sum: "$totalPrice" } } }
@@ -17,14 +17,22 @@ export const getDashboardStats = async (req, res) => {
     const totalRevenue = revenueAgg.length > 0 ? revenueAgg[0].totalRevenue : 0;
 
     const activeShows = await Show.countDocuments({ showTime: { $gte: new Date() } });
-    
-    // Get total seats booked across all time (simplest approach for now)
+
+    // Get total seats booked across all time
     const seatsAgg = await Booking.aggregate([
-      { $match: { paymentStatus: "completed", bookingStatus: "active" } },
+      { $match: { paymentStatus: "completed", bookingStatus: { $ne: "cancelled" } } },
       { $project: { seatsCount: { $size: "$seats" } } },
       { $group: { _id: null, totalSeats: { $sum: "$seatsCount" } } }
     ]);
     const totalSeatsBooked = seatsAgg.length > 0 ? seatsAgg[0].totalSeats : 0;
+
+    // Get total food items ordered
+    const foodAgg = await Booking.aggregate([
+      { $match: { paymentStatus: "completed", bookingStatus: { $ne: "cancelled" } } },
+      { $unwind: "$foodItems" },
+      { $group: { _id: null, totalFood: { $sum: "$foodItems.quantity" } } }
+    ]);
+    const totalFoodOrders = foodAgg.length > 0 ? foodAgg[0].totalFood : 0;
 
     // Recent 5 bookings
     const recentBookings = await Booking.find()
@@ -44,6 +52,7 @@ export const getDashboardStats = async (req, res) => {
       totalRevenue,
       activeShows,
       totalSeatsBooked,
+      totalFoodOrders,
       recentBookings
     });
   } catch (err) {
@@ -98,7 +107,7 @@ export const actionOnBooking = async (req, res) => {
     if (action === "cancel" || action === "refund") {
       const showId = booking.show;
       const seatsToFree = booking.seats;
-      
+
       await Show.updateOne(
         { _id: showId },
         {

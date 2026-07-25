@@ -17,27 +17,33 @@ export const cardVariant: Variants = {
 };
 
 export default function MovieCard({ movie }: any) {
+  const getPoster = (path: string) => {
+    if (!path) return "/placeholder.jpg";
+    if (path.startsWith("/") && path.length > 20) return `https://image.tmdb.org/t/p/w500${path}`;
+    return path;
+  };
+
   return (
     <Link href={`/movies/${movie.movie?._id || movie._id}`}>
-      <motion.div 
+      <motion.div
         variants={cardVariant}
-        whileHover={{ 
-          scale: 1.05, 
+        whileHover={{
+          scale: 1.05,
           boxShadow: "0px 0px 25px rgba(56, 189, 248, 0.4)",
           y: -5,
-          transition: { duration: 0.2, type: "spring", stiffness: 300 } 
+          transition: { duration: 0.2, type: "spring", stiffness: 300 }
         }}
         whileTap={{ scale: 0.95 }}
         className="w-45 cursor-pointer group bg-[#12121a] rounded-2xl pb-3 h-full border border-white/5 relative overflow-hidden"
       >
         <div className="relative overflow-hidden rounded-t-2xl">
           <img
-            src={movie.movie?.poster || movie.poster || "/placeholder.jpg"}
+            src={getPoster(movie.movie?.poster || movie.poster)}
             className="h-65 w-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
           />
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#12121a] via-transparent to-transparent opacity-80" />
-          
+
           {/* Rating badge */}
           {(movie.movie?.rating || movie.rating) && (
             <span className="absolute top-2 left-2 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md border border-white/10 shadow-lg">
@@ -52,11 +58,11 @@ export default function MovieCard({ movie }: any) {
           )}
         </div>
         <div className="px-4 mt-3 relative z-10">
-            <h3 className="font-bold text-sm leading-tight text-white line-clamp-2 drop-shadow-md">{movie.movie?.title || movie.title || "Unknown Movie"}</h3>
-            <p className="text-[10px] text-blue-400 font-bold mt-1.5 uppercase tracking-widest">{movie.movie?.genre || movie.genre || "Movie"} {movie.screen?.name ? `| ${movie.screen.name}` : ""}</p>
-            {movie.price && (
-              <p className="text-xs text-emerald-400 font-bold mt-1 drop-shadow-sm">₹{movie.price}</p>
-            )}
+          <h3 className="font-bold text-sm leading-tight text-white line-clamp-2 drop-shadow-md">{movie.movie?.title || movie.title || "Unknown Movie"}</h3>
+          <p className="text-[10px] text-blue-400 font-bold mt-1.5 uppercase tracking-widest">{movie.movie?.genre || movie.genre || "Movie"} {movie.screen?.name ? `| ${movie.screen.name}` : ""}</p>
+          {movie.price && (
+            <p className="text-xs text-emerald-400 font-bold mt-1 drop-shadow-sm">₹{movie.price}</p>
+          )}
         </div>
       </motion.div>
     </Link>

@@ -17,7 +17,7 @@ export function BookingsView() {
 
   const fetchBookings = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${API_URL}/api/admin/bookings`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -32,7 +32,7 @@ export function BookingsView() {
   const handleAction = async (id: string, action: "cancel" | "refund" | "verify") => {
     if (!confirm(`Are you sure you want to ${action} this booking?`)) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${API_URL}/api/admin/bookings/${id}/action`, { action }, {
         headers: { Authorization: `Bearer ${token}` }
       });

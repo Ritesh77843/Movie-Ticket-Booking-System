@@ -8,6 +8,8 @@ const movieSchema = new mongoose.Schema(
     language: { type: String, default: "Hindi" },
     rating: { type: String, default: "U/A" },
     duration: { type: String, default: "2h 20m" },
+    averageRating: { type: Number, default: 0 },
+    totalReviews: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

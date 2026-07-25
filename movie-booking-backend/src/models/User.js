@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
+    wishlist: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Movie"
+    }],
+
     isBlocked: {
       type: Boolean,
       default: false,

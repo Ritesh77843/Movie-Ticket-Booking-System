@@ -16,7 +16,7 @@ export default function VerifyPage() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    const pending = localStorage.getItem("pendingVerify");
+    const pending = sessionStorage.getItem("pendingVerify");
     if (pending) setEmailOrPhone(pending);
   }, []);
 
@@ -36,7 +36,7 @@ export default function VerifyPage() {
       const res = await axios.post(`${API_URL}/api/auth/verify`, payload);
 
       setSuccess(res.data.message || "Verified successfully!");
-      localStorage.removeItem("pendingVerify");
+      sessionStorage.removeItem("pendingVerify");
 
       // Redirect to login after short delay
       setTimeout(() => router.push("/login"), 1200);

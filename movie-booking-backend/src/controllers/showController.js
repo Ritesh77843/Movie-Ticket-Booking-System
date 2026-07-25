@@ -155,7 +155,7 @@ export const confirmBooking = async (req, res) => {
 
     // Strategy 1: Try to mark locked seats (locked by this user) as booked
     let result = await Show.updateOne(
-      { 
+      {
         _id: showId,
         seats: {
           $not: {
@@ -190,7 +190,7 @@ export const confirmBooking = async (req, res) => {
     // Strategy 2: If seats were auto-unlocked during payment, book from "available"
     if (result.modifiedCount === 0) {
       result = await Show.updateOne(
-        { 
+        {
           _id: showId,
           seats: {
             $not: {
@@ -226,11 +226,21 @@ export const confirmBooking = async (req, res) => {
     }
 
     // Create booking record
-    const totalPrice = seats.length * show.price;
+    let foodPrice = 0;
+    const foodItems = req.body?.foodItems || [];
+    if (foodItems.length > 0) {
+      foodItems.forEach(item => {
+        foodPrice += (item.price * item.quantity);
+      });
+    }
+
+    const totalPrice = (seats.length * show.price) + foodPrice;
+
     const booking = await Booking.create({
       user: req.user._id,
       show: showId,
       seats,
+      foodItems,
       totalPrice,
       paymentStatus: "completed",
       paymentMethod: "upi",
@@ -240,11 +250,11 @@ export const confirmBooking = async (req, res) => {
     const io = req.app.get("io");
     io.to(showId).emit("seats-updated", { showId });
 
-    res.json({ 
-      message: "Booking confirmed", 
-      seats, 
+    res.json({
+      message: "Booking confirmed",
+      seats,
       booking,
-      totalPrice 
+      totalPrice
     });
   } catch (err) {
     console.error("confirmBooking error:", err);

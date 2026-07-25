@@ -22,7 +22,7 @@ export default function ShowsPage() {
   const [loading, setLoading] = useState(true);
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://movie-ticket-booking-system-h48r.onrender.com";
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     if (!token) {
       router.push("/login");

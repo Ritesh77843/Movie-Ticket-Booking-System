@@ -37,10 +37,10 @@ export const createOrder = async (req, res) => {
 
     const order = await razorpayInstance.orders.create(options);
 
-    res.status(201).json({ 
-      orderId: order.id, 
-      amount: order.amount, 
-      currency: order.currency 
+    res.status(201).json({
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency
     });
   } catch (err) {
     console.error("createOrder error:", err);
@@ -51,12 +51,13 @@ export const createOrder = async (req, res) => {
 // POST /api/payments/verify-payment
 export const verifyPayment = async (req, res) => {
   try {
-    const { 
-      razorpay_order_id, 
-      razorpay_payment_id, 
-      razorpay_signature, 
-      showId, 
-      seats 
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      showId,
+      seats,
+      foodItems
     } = req.body;
 
     if (!showId || !Array.isArray(seats) || seats.length === 0 || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -85,7 +86,7 @@ export const verifyPayment = async (req, res) => {
 
     // Strategy 1: Try to mark locked seats (locked by this user) as booked
     let result = await Show.updateOne(
-      { 
+      {
         _id: showId,
         seats: {
           $not: {
@@ -121,7 +122,7 @@ export const verifyPayment = async (req, res) => {
     // Payment is already verified, so we must honour the booking
     if (result.modifiedCount === 0) {
       result = await Show.updateOne(
-        { 
+        {
           _id: showId,
           seats: {
             $not: {
@@ -161,11 +162,21 @@ export const verifyPayment = async (req, res) => {
       return res.status(409).json({ message: "Seats are already booked by another user. Please contact support with your payment ID: " + razorpay_payment_id });
     }
 
-    const totalPrice = seats.length * show.price;
+    let foodPrice = 0;
+    const foodItemsPayload = req.body?.foodItems || [];
+    if (foodItemsPayload.length > 0) {
+      foodItemsPayload.forEach(item => {
+        foodPrice += (item.price * item.quantity);
+      });
+    }
+
+    const totalPrice = (seats.length * show.price) + foodPrice;
+
     const booking = await Booking.create({
       user: req.user._id,
       show: showId,
       seats,
+      foodItems: foodItemsPayload,
       totalPrice,
       paymentStatus: "completed",
       paymentMethod: "razorpay",

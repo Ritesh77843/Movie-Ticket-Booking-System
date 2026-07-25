@@ -15,6 +15,9 @@ import adminRoutes from "./routes/adminRoutes.js";
 import movieRoutes from "./routes/movieRoutes.js";
 import screenRoutes from "./routes/screenRoutes.js";
 import theaterRoutes from "./routes/theaterRoutes.js";
+import foodRoutes from "./routes/foodRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { startAutoUnlockJob } from "./jobs/autoUnlock.js";
 
 const app = express();
@@ -36,9 +39,13 @@ app.use("/api/shows", showRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoutes);
+
 app.use("/api/movies", movieRoutes);
 app.use("/api/screens", screenRoutes);
 app.use("/api/theaters", theaterRoutes);
+app.use("/api/food", foodRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/users", userRoutes);
 
 // Expose io to controllers
 app.set("io", io);

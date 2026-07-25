@@ -16,7 +16,7 @@ export function DashboardView() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${API_URL}/api/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -41,10 +41,10 @@ export function DashboardView() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-             <DollarSign className="w-24 h-24 text-green-500 translate-x-4 -translate-y-4" />
+            <DollarSign className="w-24 h-24 text-green-500 translate-x-4 -translate-y-4" />
           </div>
           <div className="flex items-center space-x-4 mb-4 relative z-10">
             <div className="p-3 bg-green-500/10 rounded-xl relative z-10 border border-green-500/20">
@@ -56,8 +56,8 @@ export function DashboardView() {
         </div>
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-             <Ticket className="w-24 h-24 text-blue-500 translate-x-4 -translate-y-4" />
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <Ticket className="w-24 h-24 text-blue-500 translate-x-4 -translate-y-4" />
           </div>
           <div className="flex items-center space-x-4 mb-4 relative z-10">
             <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20">
@@ -69,8 +69,8 @@ export function DashboardView() {
         </div>
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-             <Activity className="w-24 h-24 text-purple-500 translate-x-4 -translate-y-4" />
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <Activity className="w-24 h-24 text-purple-500 translate-x-4 -translate-y-4" />
           </div>
           <div className="flex items-center space-x-4 mb-4 relative z-10">
             <div className="p-3 bg-purple-500/10 rounded-xl border border-purple-500/20">
@@ -82,24 +82,37 @@ export function DashboardView() {
         </div>
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-             <User className="w-24 h-24 text-orange-500 translate-x-4 -translate-y-4" />
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <User className="w-24 h-24 text-orange-500 translate-x-4 -translate-y-4" />
           </div>
           <div className="flex items-center space-x-4 mb-4 relative z-10">
             <div className="p-3 bg-orange-500/10 rounded-xl border border-orange-500/20">
               <User className="w-6 h-6 text-orange-500" />
             </div>
-            <h3 className="text-zinc-400 font-medium">Seats Booked</h3>
+            <h3 className="text-zinc-400 font-medium whitespace-nowrap">Seats Booked</h3>
           </div>
           <p className="text-3xl font-bold text-white relative z-10">{stats.totalSeatsBooked}</p>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <Popcorn className="w-24 h-24 text-rose-500 translate-x-4 -translate-y-4" />
+          </div>
+          <div className="flex items-center space-x-4 mb-4 relative z-10">
+            <div className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20">
+              <Popcorn className="w-6 h-6 text-rose-500" />
+            </div>
+            <h3 className="text-zinc-400 font-medium whitespace-nowrap">Concessions</h3>
+          </div>
+          <p className="text-3xl font-bold text-white relative z-10">{stats.totalFoodOrders || 0}</p>
         </div>
       </div>
 
       {/* Recent Bookings */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl overflow-hidden mt-8">
         <h3 className="text-xl font-bold mb-6 flex items-center">
-            <Activity className="w-5 h-5 mr-3 text-rose-500" />
-            Recent Bookings
+          <Activity className="w-5 h-5 mr-3 text-rose-500" />
+          Recent Bookings
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -129,11 +142,10 @@ export function DashboardView() {
                   <td className="py-3 px-4 text-sm"><span className="px-2 py-1 bg-zinc-800 rounded-md text-zinc-300">{b.seats.length}x</span></td>
                   <td className="py-3 px-4 text-sm font-semibold text-green-400">₹{b.totalPrice}</td>
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${
-                      b.paymentStatus === 'completed' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 
-                      b.paymentStatus === 'refunded' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
-                      'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-                    }`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${b.paymentStatus === 'completed' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                        b.paymentStatus === 'refunded' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                          'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                      }`}>
                       {b.paymentStatus.toUpperCase()}
                     </span>
                   </td>

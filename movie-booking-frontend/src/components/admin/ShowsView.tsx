@@ -7,7 +7,7 @@ import { Plus, Trash2, CalendarDays, Lock, Unlock, ShieldAlert, Pencil, X, Check
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 function getAuthHeader() {
-  return { Authorization: `Bearer ${localStorage.getItem("token")}` };
+  return { Authorization: `Bearer ${sessionStorage.getItem("token")}` };
 }
 
 export function ShowsView() {

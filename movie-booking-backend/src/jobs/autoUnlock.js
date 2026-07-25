@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import Show from "../models/Show.js";
 
-const LOCK_TIMEOUT_MINUTES = 2;
+const LOCK_TIMEOUT_MINUTES = 5;
 
 export const startAutoUnlockJob = (io) => {
   cron.schedule("* * * * *", async () => {
@@ -47,7 +47,7 @@ export const startAutoUnlockJob = (io) => {
 
       if (result.modifiedCount > 0) {
         console.log(`⏱️ Auto-unlocked ${result.modifiedCount} expired seat locks in ${showIds.length} shows`);
-        
+
         // Notify all clients in the affected show rooms to refresh
         showIds.forEach(id => {
           io.to(id).emit("seats-updated", { showId: id });
